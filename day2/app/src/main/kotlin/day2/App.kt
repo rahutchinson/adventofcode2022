@@ -5,50 +5,70 @@ package day2
 
 import java.io.File
 
-class RockPaperScissors {
 
-    fun play(playerOneInput: String, playerTwoInput: String): String? {
-        val (winner, loser) = getWinnerLoserCombination(playerOneInput, playerTwoInput)
-        return winnerMessage(winner, loser)
-    }
+/*
+ * X and A - Rock
+ * Z and C - Scissors
+ * Y and B - Paper
+ *
+ * */
 
-    private fun isATie(winner: String, loser: String): Boolean {
-        return winner == loser
-    }
-
-    private fun getWinnerLoserCombination(playerOneInput: String, playerTwoInput: String): Pair<String, String> {
-        return if (isPlayerOneWInner(playerOneInput, playerTwoInput))
-            Pair(playerOneInput, playerTwoInput)
-        else
-            Pair(playerTwoInput, playerOneInput)
-    }
-
-    private fun isPlayerOneWInner(playerOneInput: String, playerTwoInput: String): Boolean {
-        return (playerOneInput == "A" && playerTwoInput == "Z") ||
-                (playerOneInput == "B" && playerTwoInput == "X") ||
-                (playerOneInput == "C" && playerTwoInput == "Y")
-    }
-
-    private fun winnerMessage(winner: String, loser: String) =
-            if (isATie(winner, loser))
-                "tie"
-            else getWinningDisplayMessage(winner, loser)
-
-    private fun getWinningDisplayMessage(winner: String, loser: String) = "$winner beats $loser"
+fun isElfTheWinner(otherElf: String, elf: String): Int {
+	if(elf == "X" && otherElf == "C" ||
+	   elf == "Y" && otherElf == "A" ||
+	   elf == "Z" && otherElf == "B") {
+	   	return 6
+	   } else return 0
 }
+
+fun determineHand(otherElf: String, outcome: String): String {
+	if(outcome == "X") {
+		if(otherElf == "C") return "Y"
+		if(otherElf == "B") return "X"
+		if(otherElf == "A") return "Z"
+	}
+	if(outcome == "Y") {
+		if(otherElf == "C") return "Z"
+		if(otherElf == "B") return "Y"
+		if(otherElf == "A") return "X"
+	}
+	if(outcome == "Z") {
+		if(otherElf == "C") return "X"
+		if(otherElf == "B") return "Z"
+		if(otherElf == "A") return "Y"
+	}
+	return ""
+}
+
+fun isTie(otherElf: String, elf: String): Int {
+	if(elf == "Y" && otherElf == "B" ||
+           elf == "X" && otherElf == "A" ||
+           elf == "Z" && otherElf == "C") return 3
+	else return 0
+}
+
+fun scoreHand(elf: String): Int {
+	if(elf == "X") return 1
+	if(elf == "Y") return 2
+	if(elf == "Z") return 3
+	return 0
+}
+
 
 fun inputFromAdvent(fileName: String): List<String> {
 	return File(fileName).useLines { it.toList() }
 }
 
-fun scoreRound(input: String) {
+fun scoreRound(input: String): Int {
 	var words = input.split("\\s".toRegex())
-	words = words.map { it -> it.trim() }
-	println(words)
+	val elfHand = determineHand(words[0], words[1])
+	val roundScore = isElfTheWinner(words[0], elfHand) + isTie(words[0], elfHand) + scoreHand(elfHand)
+	return roundScore
 }
 
 fun main() {
     val input = inputFromAdvent("input.txt")
-    input.forEach { it -> scoreRound(it) }
-    println(input)
+    var totalScore = 0
+    input.forEach { it -> totalScore = totalScore + scoreRound(it) }
+    println(totalScore)
 }
