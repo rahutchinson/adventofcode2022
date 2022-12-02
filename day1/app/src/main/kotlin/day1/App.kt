@@ -33,8 +33,9 @@ class App {
 	    return elfs.toList()
 	}
 
-        fun findCalorieRichElf(input: List<Elf>): Int {
-        	return input.sortedWith(compareBy { it.totalCals }).last().totalCals
+        fun findCalorieRichElf(input: List<Elf>, numOfElves: Int): Int {
+        	val elves = input.sortedWith(compareBy { it.totalCals }).takeLast(numOfElves)
+		return elves.map { it.totalCals }.sum()
 	}
 }
 
@@ -59,5 +60,5 @@ fun main() {
     val realInput = readFileInLines("input.txt")
     val elfs = App().elfsCalories(realInput)
     println(elfs.size)
-    println(App().findCalorieRichElf(elfs))
+    println(App().findCalorieRichElf(elfs, 3))
 }
