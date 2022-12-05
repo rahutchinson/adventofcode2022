@@ -38,11 +38,22 @@ fun getScoreMap() : HashMap<String, Int> {
 	return map
 }
 
+fun find3SackValue(sacks: List<RuckSack>): String {
+	sacks[0].fullSack.forEach { it -> if(sacks[1].fullSack.contains(it.toString()) && sacks[2].fullSack.contains(it.toString())) return it.toString() }
+	return ""
+}
+
 
 fun main() {
     var sacks = inputFromAdvent("input.txt")
     val scoreMap: HashMap<String, Int> = getScoreMap()
     var score = 0
-    sacks.forEach { it -> score = score + scoreMap.get(RuckSack(it).findSame())!! }
+    var iterator = sacks.iterator()
+    while(iterator.hasNext()) {
+    	val sack1 = RuckSack(iterator.next())
+	val sack2 = RuckSack(iterator.next())
+	val sack3 = RuckSack(iterator.next())
+        score = score + scoreMap.get(find3SackValue(listOf(sack1, sack2, sack3)))!!
+    }
     println(score)
 }
